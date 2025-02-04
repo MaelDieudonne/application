@@ -89,25 +89,51 @@ pd.concat([X_train, y_train]).to_csv("train.csv")
 pd.concat([X_test, y_test]).to_csv("test.csv")
 
 
-## Random Forest
-# Ici demandons d'avoir 20 arbres
-N_TREES = 20
+## Random Forest with user-input number of trees
+input_val = input("Enter the number of trees: ")
+N_TREES = int(input_val)
 pipe = Pipeline(
     [
         ("preprocessor", preprocessor),
-        ("classifier", RandomForestClassifier(n_estimators=N_TREES)),
+       ("classifier", RandomForestClassifier(n_estimators=N_TREES)),
     ]
 )
-
 pipe.fit(X_train, y_train)
 
-# calculons le score sur le dataset d'apprentissage et sur le dataset de test
-# (10% du dataset d'apprentissage mis de côté)
-# le score étant le nombre de bonne prédiction
 rdmf_score = pipe.score(X_test, y_test)
 rdmf_score_tr = pipe.score(X_train, y_train)
-print(f"{rdmf_score:.1%} de bonnes réponses sur les données de test pour validation")
+print("n_trees =", N_TREES)
+print(
+    f"{rdmf_score:.1%} de bonnes réponses sur les données de test pour validation"
+)
 
-print(20 * "-")
 print("matrice de confusion")
 print(confusion_matrix(y_test, pipe.predict(X_test)))
+print()
+
+## Random Forest with user-input number of trees
+param_space = [5, 10, 20]
+for N_TREES in param_space:
+
+    pipe = Pipeline(
+        [
+            ("preprocessor", preprocessor),
+            ("classifier", RandomForestClassifier(n_estimators=N_TREES)),
+        ]
+    )
+
+    pipe.fit(X_train, y_train)
+
+    # calculons le score sur le dataset d'apprentissage et sur le dataset de test
+    # (10% du dataset d'apprentissage mis de côté)
+    # le score étant le nombre de bonne prédiction
+    rdmf_score = pipe.score(X_test, y_test)
+    rdmf_score_tr = pipe.score(X_train, y_train)
+    print("n_trees =", N_TREES)
+    print(
+        f"{rdmf_score:.1%} de bonnes réponses sur les données de test pour validation"
+    )
+
+    print("matrice de confusion")
+    print(confusion_matrix(y_test, pipe.predict(X_test)))
+    print()
